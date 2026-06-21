@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vorax AI Chat</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0d0d0d;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .box {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    input {
+      width: 80%;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+      background: #00ffcc;
+      border: none;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+
+    #response {
+      margin-top: 20px;
+      color: #00ffcc;
+      min-height: 50px;
+    }
+
+    h1 {
+      color: #00ffcc;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h1>🤖 Vorax AI</h1>
+  <p>Ton assistant business intelligent</p>
+
+  <input id="msg" placeholder="Écris ton message..." />
+  <br>
+  <button onclick="send()">Envoyer</button>
+
+  <div id="response"></div>
+</div>
+
+<script>
+async function send() {
+  const message = document.getElementById("msg").value;
+
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+  document.getElementById("response").innerText = data.reply;
+}
+</script>
+
+</body>
+</html>
