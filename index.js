@@ -1,30 +1,32 @@
-const express = require("express");
-const app = express();
+app.post("/chat", (req, res) => {
+  const message = req.body.message.toLowerCase();
 
-app.use(express.json());
-
-app.post("/chat", async (req, res) => {
-  const message = req.body.message;
-
-  // Réponse simple (IA simulée pour commencer)
   let reply = "";
 
-  if (message.toLowerCase().includes("business")) {
-    reply = "💼 Conseil : crée une offre simple et vends-la sur WhatsApp.";
-  } else if (message.toLowerCase().includes("argent")) {
-    reply = "💰 Astuce : propose un abonnement mensuel à tes clients.";
-  } else {
-    reply = "🤖 Je suis ton assistant IA Vorax. Pose-moi une question business.";
+  // 🧠 Business
+  if (message.includes("business") || message.includes("argent")) {
+    reply = "💼 Pour gagner de l’argent : crée une offre simple et vends-la sur WhatsApp ou TikTok.";
+  }
+
+  // 📣 Marketing
+  else if (message.includes("client") || message.includes("vente")) {
+    reply = "📊 Trouve des clients en publiant du contenu court sur TikTok + propose une solution simple.";
+  }
+
+  // 💡 Idées
+  else if (message.includes("idee") || message.includes("projet")) {
+    reply = "💡 Idée : un service IA pour aider les petites entreprises à écrire leurs messages de vente.";
+  }
+
+  // 🔥 Motivation
+  else if (message.includes("motivation")) {
+    reply = "🔥 Le succès vient de la constance. Construis petit, mais chaque jour.";
+  }
+
+  // 🤖 défaut
+  else {
+    reply = "🤖 Vorax AI gratuit : pose-moi une question sur business, argent, ou marketing.";
   }
 
   res.json({ reply });
-});
-
-app.get("/", (req, res) => {
-  res.send("🤖 IA Vorax en ligne !");
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log("Serveur en ligne");
 });
