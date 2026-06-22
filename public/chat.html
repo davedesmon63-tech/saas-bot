@@ -1,31 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Vorax Chat</title>
-</head>
-<body style="background:#111;color:white;text-align:center;font-family:Arial">
+app.post("/chat", (req, res) => {
+  const message = (req.body.message || "").toLowerCase();
 
-<h1>🤖 Vorax AI</h1>
+  // compteur simple en mémoire (MVP)
+  if (!global.count) global.count = 0;
 
-<input id="msg" placeholder="Écris..." />
-<button onclick="send()">Envoyer</button>
+  let reply = "";
 
-<p id="res"></p>
+  if (message.includes("business") || message.includes("idée")) {
 
-<script>
-async function send() {
-  const message = document.getElementById("msg").value;
+    global.count++;
 
-  const res = await fetch("/chat", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ message })
-  });
+    // 🟢 FREE LIMIT = 2 idées
+    if (global.count === 1) {
+      reply = `💡 Idée 1 :
+Créer une page TikTok de produits viraux.
 
-  const data = await res.json();
-  document.getElementById("res").innerText = data.reply;
-}
-</script>
+📌 Exemple :
+Tu postes des vidéos simples et tu fais de l’affiliation.`;
+    }
 
-</body>
-</html>
+    else if (global.count === 2) {
+      reply = `💡 Idée 2 :
+Faire du dropshipping avec des produits tendance.
+
+📌 Exemple :
+Tu vends via TikTok ou WhatsApp sans stock.
+
+🔴 Tu as atteint la limite FREE.`;
+    }
+
+    // 🔴 BLOQUAGE + VENTE
+    else {
+      reply = `🚫 Limite FREE atteinte
+
+👉 Pour accéder à :
+- +50 idées de business
+- niches rentables
+- stratégies complètes
+- scripts de vente
+
+💰 Veuillez vous abonner à Vorax PRO`;
+    }
+  }
+
+  else if (message.includes("bonjour")) {
+    reply = "Salut 👋 ! Demande une idée de business 💰";
+  }
+
+  else {
+    reply = "💡 Essaie : 'donne-moi une idée de business'";
+  }
+
+  res.json({ reply });
+});
