@@ -27,7 +27,8 @@ function saveDB(db) {
 // 🤖 CHAT BOT
 // =========================
 app.post("/chat", (req, res) => {
-  const { message, userId } = req.body;
+  const message = (req.body.message || "").toLowerCase().trim();
+  const userId = req.body.userId || "guest";
 
   const db = loadDB();
 
@@ -45,7 +46,7 @@ app.post("/chat", (req, res) => {
   }
 
   // 🟢 FREE MODE (limité à 2 idées)
-  if (message && (message.toLowerCase().includes("business") || message.toLowerCase().includes("idée"))) {
+  if (message.includes("business") || message.includes("idée")) {
 
     user.count++;
 
