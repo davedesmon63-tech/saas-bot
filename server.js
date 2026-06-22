@@ -4,29 +4,77 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
-  res.send("Serveur OK 🚀");
-});
+// 🧠 compteur FREE global (MVP)
+let freeCount = {};
 
+// 🤖 CHAT BOT
 app.post("/chat", (req, res) => {
-  try {
-    const message = (req.body.message || "").toLowerCase();
+  const message = (req.body.message || "").toLowerCase();
+  const userId = req.body.userId || "guest";
 
-    let reply = "Je ne comprends pas 🤔";
-
-    if (message.includes("bonjour")) reply = "Salut 👋";
-    if (message.includes("argent")) reply = "💰 Lance un business en ligne";
-    if (message.includes("business")) reply = "📈 Trouve un problème et vends la solution";
-
-    res.json({ reply });
-
-  } catch (err) {
-    res.json({ reply: "Erreur serveur ⚠️" });
+  if (!freeCount[userId]) {
+    freeCount[userId] = 0;
   }
+
+  let reply = "";
+
+  // 💡 BUSINESS / IDÉES
+  if (message.includes("business") || message.includes("idée")) {
+
+    freeCount[userId]++;
+
+    // 🟢 IDÉE 1
+    if (freeCount[userId] === 1) {
+      reply = `💡 Idée 1 :
+Créer une page TikTok de produits viraux.
+
+📌 Exemple :
+Tu postes des vidéos simples et tu fais de l'affiliation (Amazon / TikTok Shop).
+
+💰 Facile à commencer sans argent.`;
+    }
+
+    // 🟢 IDÉE 2
+    else if (freeCount[userId] === 2) {
+      reply = `💡 Idée 2 :
+Faire du dropshipping avec produits tendance.
+
+📌 Exemple :
+Tu vends sur TikTok ou WhatsApp sans stock.
+
+🚀 Tu as terminé les idées gratuites.`;
+    }
+
+    // 🔴 BLOQUAGE + VENTE
+    else {
+      reply = `🚫 Limite FREE atteinte
+
+👉 Pour continuer et obtenir :
+- +50 idées de business
+- niches rentables en Afrique
+- scripts TikTok prêts
+- stratégies complètes
+
+💰 Abonne-toi à VORAX PRO`;
+    }
+  }
+
+  // 👋 SALUT
+  else if (message.includes("bonjour")) {
+    reply = "Salut 👋 ! Demande-moi une idée de business 💰";
+  }
+
+  // ❓ DEFAULT
+  else {
+    reply = "💡 Écris : 'donne-moi une idée de business'";
+  }
+
+  res.json({ reply });
 });
 
+// 🚀 PORT RENDER
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Serveur OK sur port " + PORT);
-});  
+  console.log("🚀 Server running on port " + PORT);
+});
