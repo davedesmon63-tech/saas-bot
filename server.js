@@ -1,140 +1,96 @@
-const express = require("express");
-const fs = require("fs");
-
-const app = express();
-app.use(express.json());
-app.use(express.static("public"));
-
-const DB_FILE = "./db.json";
-
-
-// 🧠 INIT / LOAD DB
-function loadDB() {
-  if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify({ users: {} }));
-  }
-  return JSON.parse(fs.readFileSync(DB_FILE));
-}
-
-
-// 💾 SAVE DB
-function saveDB(db) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
-}
-
-
-// =========================
-// 🤖 CHAT BOT
-// =========================
-app.post("/chat", (req, res) => {
-  const message = (req.body.message || "").toLowerCase().trim();
-  const userId = req.body.userId || "guest";
-
-  const db = loadDB();
-
-  if (!db.users[userId]) {
-    db.users[userId] = { pro: false, count: 0 };
-  }
-
-  const user = db.users[userId];
-
-  // 🔵 PRO MODE
+// 🔵 PRO MODE (15 idées business)
   if (user.pro) {
+
+    const proIdeas = [
+      `💡 BUSINESS PRO 1 :
+TikTok boutique automatisée + produits viraux
+
+📈 Stratégie :
+- vidéos courtes
+- produits tendance
+- influenceurs
+
+💰 10k - 50k FCFA/jour`,
+
+      `💡 BUSINESS PRO 2 :
+Gestion WhatsApp Business pour commerces
+
+📈 Stratégie :
+- répondre clients
+- automatisation messages
+- abonnement mensuel
+
+💰 20k FCFA/jour`,
+
+      `💡 BUSINESS PRO 3 :
+Service montage vidéo TikTok
+
+💰 15k - 50k FCFA/jour`,
+
+      `💡 BUSINESS PRO 4 :
+Dropshipping produits tendance
+
+💰 10k - 60k FCFA/jour`,
+
+      `💡 BUSINESS PRO 5 :
+Création CV professionnels (Canva)
+
+💰 5k - 20k FCFA/jour`,
+
+      `💡 BUSINESS PRO 6 :
+Mini agence publicité TikTok
+
+💰 30k - 100k FCFA/mois`,
+
+      `💡 BUSINESS PRO 7 :
+Affiliation produits viraux
+
+💰 revenu passif`,
+
+      `💡 BUSINESS PRO 8 :
+Formation en ligne WhatsApp + PDF
+
+💰 10k FCFA/jour`,
+
+      `💡 BUSINESS PRO 9 :
+Gestion pages Instagram entreprises
+
+💰 20k - 70k FCFA/mois`,
+
+      `💡 BUSINESS PRO 10 :
+Bots WhatsApp pour entreprises
+
+💰 20k FCFA/client`,
+
+      `💡 BUSINESS PRO 11 :
+Revente services digitaux (logos, flyers)
+
+💰 5k - 30k FCFA/jour`,
+
+      `💡 BUSINESS PRO 12 :
+Marketing d’influence micro
+
+💰 variable`,
+
+      `💡 BUSINESS PRO 13 :
+Pages Facebook monétisées
+
+💰 revenu passif`,
+
+      `💡 BUSINESS PRO 14 :
+Service e-commerce WhatsApp catalogue
+
+💰 10k - 80k FCFA/jour`,
+
+      `💡 BUSINESS PRO 15 :
+Revente produits locaux avec marge
+
+💰 5k - 40k FCFA/jour`
+    ];
+
+    const idea = proIdeas[Math.floor(Math.random() * proIdeas.length)];
+
     return res.json({
-      reply: "🔥 PRO ACTIF : accès illimité aux idées business + stratégies avancées"
+      reply: "🔥 PRO ACTIF\n\n" + idea
     });
   }
-
-  // 🟢 FREE MODE (limité à 2 idées)
-  if (message.includes("business") || message.includes("idée")) {
-
-    user.count++;
-
-    let reply = "";
-
-    if (user.count === 1) {
-      reply = `💡 Business :
-Vendre des produits tendance sur TikTok
-
-📈 Pourquoi ça marche :
-- faible concurrence locale
-- forte demande
-- rapide à démarrer
-
-💰 Revenu possible : 3000–15000 FCFA/jour`;
-    } 
-    else if (user.count === 2) {
-      reply = `💡 Business :
-Dropshipping de produits tendance
-
-📈 Pourquoi ça marche :
-- pas de stock
-- facile à lancer
-- forte demande
-
-💰 Revenu possible : 5000–20000 FCFA/jour`;
-    } 
-    else {
-      reply = "🚫 Limite atteinte. Passe PRO pour +50 idées business 💰";
-    }
-
-    saveDB(db);
-    return res.json({ reply });
-  }
-
-  res.json({ reply: "💡 Demande une idée de business pour commencer" });
-});
-
-
-// =========================
-// 📩 DEMANDE PAIEMENT
-// =========================
-app.post("/activate-request", (req, res) => {
-  const { phone, userId } = req.body;
-
-  const db = loadDB();
-
-  if (!db.users[userId]) {
-    db.users[userId] = { pro: false, count: 0 };
-  }
-
-  db.users[userId].phone = phone;
-  db.users[userId].pending = true;
-
-  saveDB(db);
-
-  console.log("💰 Nouvelle demande PRO :", phone);
-
-  res.json({ success: true });
-});
-
-
-// =========================
-// 🔓 ACTIVER PRO (ADMIN)
-// =========================
-app.post("/activate-pro", (req, res) => {
-  const { userId } = req.body;
-
-  const db = loadDB();
-
-  if (!db.users[userId]) {
-    db.users[userId] = { pro: true, count: 0 };
-  } else {
-    db.users[userId].pro = true;
-    db.users[userId].pending = false;
-  }
-
-  saveDB(db);
-
-  res.json({ success: true });
-});
-
-
-// =========================
-// 🚀 START SERVER
-// =========================
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("🚀 SaaS STARTUP RUNNING ON PORT", PORT);
-});
