@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vorax Chat</title>
+</head>
+<body style="background:#111;color:white;text-align:center;font-family:Arial">
+
+<h1>🤖 Vorax AI</h1>
+
+<input id="msg" placeholder="Écris..." />
+<button onclick="send()">Envoyer</button>
+
+<p id="res"></p>
+
+<script>
+async function send() {
+  const message = document.getElementById("msg").value;
+
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+  document.getElementById("res").innerText = data.reply;
+}
+</script>
+
+</body>
+</html>
