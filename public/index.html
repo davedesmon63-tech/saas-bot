@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>SaaS Bot</title>
+</head>
+
+<body>
+
+  <!-- 🖼️ LOGO -->
+  <img src="logo.png" width="120">
+
+  <h1>Mon SaaS</h1>
+
+  <!-- 🔐 LOGIN -->
+  <input id="userId" placeholder="username">
+  <input id="password" placeholder="password">
+
+  <button onclick="login()">Login</button>
+  <button onclick="register()">Register</button>
+
+  <hr>
+
+  <!-- 💬 CHAT -->
+  <input id="message" placeholder="message">
+  <button onclick="sendMessage()">Send</button>
+
+  <p id="response"></p>
+
+  <!-- ===================== -->
+  <!-- 🔥 SCRIPTS -->
+  <!-- ===================== -->
+
+  <script>
+  async function login() {
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: document.getElementById("userId").value,
+        password: document.getElementById("password").value
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // ✅ STOCK USER
+      localStorage.setItem("userId", data.userId);
+
+      alert("✅ Login réussi");
+    } else {
+      alert("❌ " + data.error);
+    }
+  }
+
+  async function register() {
+    const res = await fetch("/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: document.getElementById("userId").value,
+        password: document.getElementById("password").value
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✅ Compte créé");
+    } else {
+      alert("❌ " + data.error);
+    }
+  }
+
+  async function sendMessage() {
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: document.getElementById("message").value,
+        userId: localStorage.getItem("userId")
+      })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("response").innerText = data.reply;
+  }
+  </script>
+
+</body>
+</html>
