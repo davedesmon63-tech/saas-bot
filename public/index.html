@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Vorax AI</title>
+
   <style>
     body {
       margin: 0;
@@ -47,6 +48,11 @@
       width: 80%;
       border-radius: 10px;
     }
+
+    #pay {
+      display: none;
+      margin-top: 20px;
+    }
   </style>
 </head>
 
@@ -54,8 +60,19 @@
 
 <div class="hero">
   <h1>🤖 Vorax AI</h1>
-  <p>Ton assistant business pour gagner de l’argent et développer ton activité 💰</p>
+  <p>Ton assistant business pour gagner de l’argent 💰</p>
+
   <button class="btn" onclick="go()">Essayer maintenant</button>
+
+  <button class="btn" onclick="showPay()">💰 Payer PRO</button>
+
+  <div id="pay">
+    <p>📲 Orange Money : 07 XX XX XX XX</p>
+    <p>📲 MTN Money : 05 XX XX XX XX</p>
+    <p>📲 Wave : 07 XX XX XX XX</p>
+
+    <p>👉 Envoie ton reçu pour activation PRO</p>
+  </div>
 </div>
 
 <div class="section">
@@ -63,19 +80,22 @@
 
   <div class="box">💼 Générer des idées de business</div>
   <div class="box">📊 Trouver des clients facilement</div>
-  <div class="box">💰 Apprendre à gagner de l’argent en ligne</div>
+  <div class="box">💰 Gagner de l’argent en ligne</div>
   <div class="box">🚀 Stratégies TikTok / WhatsApp</div>
 </div>
 
 <div class="section">
   <h2>💰 Prix</h2>
   <p>Accès complet : 2000 FCFA / mois</p>
-  <p>Paiement via Mobile Money (bientôt intégré)</p>
 </div>
 
 <script>
 function go() {
   window.location.href = "/chat.html";
+}
+
+function showPay() {
+  document.getElementById("pay").style.display = "block";
 }
 </script>
 
