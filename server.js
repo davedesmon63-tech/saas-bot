@@ -1,80 +1,104 @@
 const express = require("express");
+const fs = require("fs");
 const app = express();
 
 app.use(express.json());
 app.use(express.static("public"));
 
-// 🧠 compteur FREE global (MVP)
-let freeCount = {};
+const DB_FILE = "./db.json";
 
-// 🤖 CHAT BOT
+// 🧠 INIT DB
+function loadDB() {
+  if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, JSON.stringify({ users: {} }));
+  }
+  return JSON.parse(fs.readFileSync(DB_FILE));
+}
+
+function saveDB(db) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
+// 🤖 CHAT
 app.post("/chat", (req, res) => {
-  const message = (req.body.message || "").toLowerCase();
-  const userId = req.body.userId || "guest";
+  const { message, userId } = req.body;
 
-  if (!freeCount[userId]) {
-    freeCount[userId] = 0;
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    db.users[userId] = { pro: false, count: 0 };
   }
 
-  let reply = "";
+  const user = db.users[userId];
 
-  // 💡 BUSINESS / IDÉES
+  // 🔵 PRO MODE
+  if (user.pro) {
+    return res.json({
+      reply: "🔥 PRO ACTIF : accès illimité aux idées business"
+    });
+  }
+
+  // 🟢 FREE MODE
   if (message.includes("business") || message.includes("idée")) {
+    user.count++;
 
-    freeCount[userId]++;
+    let reply = "";
 
-    // 🟢 IDÉE 1
-    if (freeCount[userId] === 1) {
-      reply = `💡 Idée 1 :
-Créer une page TikTok de produits viraux.
-
-📌 Exemple :
-Tu postes des vidéos simples et tu fais de l'affiliation (Amazon / TikTok Shop).
-
-💰 Facile à commencer sans argent.`;
+    if (user.count === 1) {
+      reply = "💡 TikTok + affiliation produits viraux";
+    } else if (user.count === 2) {
+      reply = "💡 Dropshipping produits tendance";
+    } else {
+      reply = "🚫 Limite atteinte. Passe PRO 💰";
     }
 
-    // 🟢 IDÉE 2
-    else if (freeCount[userId] === 2) {
-      reply = `💡 Idée 2 :
-Faire du dropshipping avec produits tendance.
-
-📌 Exemple :
-Tu vends sur TikTok ou WhatsApp sans stock.
-
-🚀 Tu as terminé les idées gratuites.`;
-    }
-
-    // 🔴 BLOQUAGE + VENTE
-    else {
-      reply = `🚫 Limite FREE atteinte
-
-👉 Pour continuer et obtenir :
-- +50 idées de business
-- niches rentables en Afrique
-- scripts TikTok prêts
-- stratégies complètes
-
-💰 Abonne-toi à VORAX PRO`;
-    }
+    saveDB(db);
+    return res.json({ reply });
   }
 
-  // 👋 SALUT
-  else if (message.includes("bonjour")) {
-    reply = "Salut 👋 ! Demande-moi une idée de business 💰";
-  }
-
-  // ❓ DEFAULT
-  else {
-    reply = "💡 Écris : 'donne-moi une idée de business'";
-  }
-
-  res.json({ reply });
+  res.json({ reply: "💡 Demande une idée de business" });
 });
 
-// 🚀 PORT RENDER
+// 📩 DEMANDE PAIEMENT
+app.post("/activate-request", (req, res) => {
+  const { phone, userId } = req.body;
+
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    db.users[userId] = { pro: false, count: 0 };
+  }
+
+  db.users[userId].phone = phone;
+  db.users[userId].pending = true;
+
+  saveDB(db);
+
+  console.log("💰 Nouvelle demande PRO :", phone);
+
+  res.json({ success: true });
+});
+
+// 🔓 ACTIVER PRO (ADMIN / AUTOMATIQUE PLUS TARD)
+app.post("/activate-pro", (req, res) => {
+  const { userId } = req.body;
+
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    db.users[userId] = { pro: true, count: 0 };
+  } else {
+    db.users[userId].pro = true;
+    db.users[userId].pending = false;
+  }
+
+  saveDB(db);
+
+  res.json({ success: true });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("🚀 Server running on port " + PORT);
+  console.log("🚀 SaaS STARTUP RUNNING");
 });
