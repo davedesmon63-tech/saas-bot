@@ -1,5 +1,16 @@
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// 🏠 Page SaaS
+app.get("/", (req, res) => {
+  res.send("🔥 Vorax AI SaaS est en ligne");
+});
+
+// 💬 Chat endpoint
 app.post("/chat", (req, res) => {
-  const message = req.body.message.toLowerCase();
+  const message = (req.body.message || "").toLowerCase();
 
   let reply = "";
 
@@ -29,4 +40,10 @@ app.post("/chat", (req, res) => {
   }
 
   res.json({ reply });
+});
+
+// 🚀 PORT Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Serveur lancé sur le port " + PORT);
 });
