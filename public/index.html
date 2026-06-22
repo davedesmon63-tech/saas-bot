@@ -1,103 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Vorax AI</title>
+<input id="userId" placeholder="username">
+<input id="password" placeholder="password">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0d0d0d;
-      color: white;
-      text-align: center;
-    }
-
-    .hero {
-      padding: 70px 20px;
-      background: linear-gradient(45deg, #111, #222);
-    }
-
-    h1 {
-      color: #00ffcc;
-      font-size: 40px;
-    }
-
-    p {
-      opacity: 0.8;
-      font-size: 18px;
-    }
-
-    .btn {
-      background: #00ffcc;
-      border: none;
-      padding: 15px 25px;
-      margin-top: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      border-radius: 8px;
-    }
-
-    .section {
-      padding: 40px 20px;
-    }
-
-    .box {
-      background: #1a1a1a;
-      margin: 10px auto;
-      padding: 20px;
-      width: 80%;
-      border-radius: 10px;
-    }
-
-    #pay {
-      display: none;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="hero">
-  <h1>🤖 Vorax AI</h1>
-  <p>Ton assistant business pour gagner de l’argent 💰</p>
-
-  <button class="btn" onclick="go()">Essayer maintenant</button>
-
-  <button class="btn" onclick="showPay()">💰 Payer PRO</button>
-
-  <div id="pay">
-    <p>📲 Orange Money : 07 XX XX XX XX</p>
-    <p>📲 MTN Money : 05 XX XX XX XX</p>
-    <p>📲 Wave : 07 XX XX XX XX</p>
-
-    <p>👉 Envoie ton reçu pour activation PRO</p>
-  </div>
-</div>
-
-<div class="section">
-  <h2>🔥 Ce que tu peux faire</h2>
-
-  <div class="box">💼 Générer des idées de business</div>
-  <div class="box">📊 Trouver des clients facilement</div>
-  <div class="box">💰 Gagner de l’argent en ligne</div>
-  <div class="box">🚀 Stratégies TikTok / WhatsApp</div>
-</div>
-
-<div class="section">
-  <h2>💰 Prix</h2>
-  <p>Accès complet : 2000 FCFA / mois</p>
-</div>
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
 
 <script>
-function go() {
-  window.location.href = "/chat.html";
+async function register() {
+  await fetch("/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: document.getElementById("userId").value,
+      password: document.getElementById("password").value
+    })
+  });
 }
 
-function showPay() {
-  document.getElementById("pay").style.display = "block";
+async function login() {
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: document.getElementById("userId").value,
+      password: document.getElementById("password").value
+    })
+  });
+
+  const data = await res.json();
+  console.log(data);
 }
 </script>
-
-</body>
-</html>
