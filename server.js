@@ -1,0 +1,78 @@
+const express = require("express");
+const fs = require("fs");
+
+const app = express();
+app.use(express.json());
+app.use(express.static("public"));
+
+const DB_FILE = "./db.json";
+
+// 📦 DB
+function loadDB() {
+  if (!fs.existsSync(DB_FILE)) {
+    return { users: {} };
+  }
+  return JSON.parse(fs.readFileSync(DB_FILE));
+}
+
+function saveDB(data) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+}
+
+// 💬 CHAT
+app.post("/chat", (req, res) => {
+  const message = (req.body.message || "").toLowerCase().trim();
+  const userId = req.body.userId || "guest";
+
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    db.users[userId] = { pro: false, count: 0 };
+  }
+
+  const user = db.users[userId];
+
+  // 🔵 PRO
+  if (user.pro) {
+    const ideas = [
+      "💡 TikTok boutique automatisée",
+      "💡 WhatsApp Business service",
+      "💡 Montage vidéo TikTok",
+      "💡 Dropshipping",
+      "💡 Création CV"
+    ];
+
+    const idea = ideas[Math.floor(Math.random() * ideas.length)];
+
+    return res.json({
+      reply: "🔥 PRO ACTIF\n\n" + idea
+    });
+  }
+
+  // 🟢 FREE
+  if (message.includes("business") || message.includes("idée")) {
+    user.count++;
+
+    let reply = "";
+
+    if (user.count === 1) {
+      reply = "💡 Vendre sur TikTok\n💰 3000–15000 FCFA/jour";
+    } else if (user.count === 2) {
+      reply = "💡 Dropshipping\n💰 5000–20000 FCFA/jour";
+    } else {
+      reply = "🚫 Limite atteinte. Passe PRO 💰";
+    }
+
+    saveDB(db);
+    return res.json({ reply });
+  }
+
+  res.json({ reply: "💡 Demande une idée de business" });
+});
+
+// 🚀 SERVEUR
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("🚀 SERVEUR LANCÉ SUR PORT", PORT);
+});
