@@ -1,91 +1,34 @@
-// 🔵 PRO MODE (15 idées business)
+app.post("/chat", (req, res) => {
+  const message = (req.body.message || "").toLowerCase().trim();
+  const userId = req.body.userId || "guest";
+
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    db.users[userId] = { pro: false, count: 0 };
+  }
+
+  const user = db.users[userId];
+
+  // 🔵 PRO MODE (CORRECTEMENT PLACÉ)
   if (user.pro) {
 
     const proIdeas = [
-      `💡 BUSINESS PRO 1 :
-TikTok boutique automatisée + produits viraux
-
-📈 Stratégie :
-- vidéos courtes
-- produits tendance
-- influenceurs
-
-💰 10k - 50k FCFA/jour`,
-
-      `💡 BUSINESS PRO 2 :
-Gestion WhatsApp Business pour commerces
-
-📈 Stratégie :
-- répondre clients
-- automatisation messages
-- abonnement mensuel
-
-💰 20k FCFA/jour`,
-
-      `💡 BUSINESS PRO 3 :
-Service montage vidéo TikTok
-
-💰 15k - 50k FCFA/jour`,
-
-      `💡 BUSINESS PRO 4 :
-Dropshipping produits tendance
-
-💰 10k - 60k FCFA/jour`,
-
-      `💡 BUSINESS PRO 5 :
-Création CV professionnels (Canva)
-
-💰 5k - 20k FCFA/jour`,
-
-      `💡 BUSINESS PRO 6 :
-Mini agence publicité TikTok
-
-💰 30k - 100k FCFA/mois`,
-
-      `💡 BUSINESS PRO 7 :
-Affiliation produits viraux
-
-💰 revenu passif`,
-
-      `💡 BUSINESS PRO 8 :
-Formation en ligne WhatsApp + PDF
-
-💰 10k FCFA/jour`,
-
-      `💡 BUSINESS PRO 9 :
-Gestion pages Instagram entreprises
-
-💰 20k - 70k FCFA/mois`,
-
-      `💡 BUSINESS PRO 10 :
-Bots WhatsApp pour entreprises
-
-💰 20k FCFA/client`,
-
-      `💡 BUSINESS PRO 11 :
-Revente services digitaux (logos, flyers)
-
-💰 5k - 30k FCFA/jour`,
-
-      `💡 BUSINESS PRO 12 :
-Marketing d’influence micro
-
-💰 variable`,
-
-      `💡 BUSINESS PRO 13 :
-Pages Facebook monétisées
-
-💰 revenu passif`,
-
-      `💡 BUSINESS PRO 14 :
-Service e-commerce WhatsApp catalogue
-
-💰 10k - 80k FCFA/jour`,
-
-      `💡 BUSINESS PRO 15 :
-Revente produits locaux avec marge
-
-💰 5k - 40k FCFA/jour`
+      "💡 TikTok boutique automatisée + produits viraux",
+      "💡 Gestion WhatsApp Business pour commerces",
+      "💡 Service montage vidéo TikTok",
+      "💡 Dropshipping produits tendance",
+      "💡 Création CV professionnels",
+      "💡 Mini agence pub TikTok",
+      "💡 Affiliation produits viraux",
+      "💡 Formation en ligne WhatsApp + PDF",
+      "💡 Gestion Instagram entreprises",
+      "💡 Bots WhatsApp pour entreprises",
+      "💡 Vente de services digitaux",
+      "💡 Marketing d’influence micro",
+      "💡 Pages Facebook monétisées",
+      "💡 E-commerce WhatsApp catalogue",
+      "💡 Revente produits locaux avec marge"
     ];
 
     const idea = proIdeas[Math.floor(Math.random() * proIdeas.length)];
@@ -94,3 +37,33 @@ Revente produits locaux avec marge
       reply: "🔥 PRO ACTIF\n\n" + idea
     });
   }
+
+  // 🟢 FREE MODE
+  if (message.includes("business") || message.includes("idée")) {
+
+    user.count++;
+
+    let reply = "";
+
+    if (user.count === 1) {
+      reply = `💡 Business :
+Vendre des produits tendance sur TikTok
+
+💰 3000–15000 FCFA/jour`;
+    } 
+    else if (user.count === 2) {
+      reply = `💡 Business :
+Dropshipping produits tendance
+
+💰 5000–20000 FCFA/jour`;
+    } 
+    else {
+      reply = "🚫 Limite atteinte. Passe PRO 💰";
+    }
+
+    saveDB(db);
+    return res.json({ reply });
+  }
+
+  res.json({ reply: "💡 Demande une idée de business" });
+});
