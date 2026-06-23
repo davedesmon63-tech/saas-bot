@@ -23,10 +23,7 @@ function loadDB() {
 app.post("/login", (req, res) => {
   // login code
 });
-
-/* ======================
-   PAYMENT ROUTES  
-====================== *//* ======================
+  /* ======================
    PAYMENT ROUTES
 ====================== */
 
@@ -57,8 +54,7 @@ app.post("/notify", async (req, res) => {
 
       const userId = payment.customer_name;
 
-      if (db.users[userId]) {
-        db.users[userId].premium = true;
+      .premium = true;
       }
 
       fs.writeFileSync("db.json", JSON.stringify(db, null, 2));
@@ -73,25 +69,9 @@ app.post("/notify", async (req, res) => {
     res.send("ERREUR");
   }
 });
-app.post("/pay", async (req, res) => {
-  const { userId } = req.body;
 
-  const db = loadDB(); // ✅ ici c’est BON
-  const user = db.users[userId];
 
-  if (!user) {
-    return res.json({ error: "Utilisateur introuvable" });
-  }
-
-  // suite...
-});
-
-res.json({
-totalUsers: total,
-premiumUsers: premium,
-freeUsers: total - premium
-});
-});  
+  
 app.get("/admin/users", (req, res) => {
   const db = loadDB();
 
