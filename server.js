@@ -54,7 +54,16 @@ premiumUsers: premium,
 freeUsers: total - premium
 });
 });  
+app.get("/admin/users", (req, res) => {
+  const db = loadDB();
 
+  const users = Object.entries(db.users).map(([id, data]) => ({
+    id,
+    ...data
+  }));
+
+  res.json(users);
+});
 
 // REGISTER
 app.post("/register", async (req, res) => {
