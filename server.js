@@ -1,0 +1,208 @@
+const express = require("express");
+const fs = require("fs");
+const axios = require("axios");
+const session = require("express-session");
+const bcrypt = require("bcrypt");
+
+const app = express();
+
+/* ======================
+   MIDDLEWARES
+====================== */
+app.use(express.json());
+app.use(express.static("public"));
+
+app.use(session({
+  secret: "vorax_secret_key_super_secure",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24
+  }
+}));
+
+/* ======================
+   DATABASE FILE
+====================== */
+const DB_FILE = "./db.json";
+
+function loadDB() {
+  if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, JSON.stringify({ users: {} }, null, 2));
+  }
+  return JSON.parse(fs.readFileSync(DB_FILE));
+}
+
+function saveDB(db) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
+/* ======================
+   ROUTES
+====================== */
+
+// REGISTER
+app.post("/register", (req, res) => {
+  const { userId, password } = req.body;
+
+  const db = loadDB();
+
+  if (db.users[userId]) {
+    return res.json({ error: "Utilisateur existe déjà" });
+  }
+
+  db.users[userId] = {
+    password,
+    pro: false,
+    count: 0
+  };
+
+  saveDB(db);
+
+  res.json({ success: true });
+});
+
+// LOGIN
+app.post("/login", (req, res) => {
+  const { userId, password } = req.body;
+
+  const db = loadDB();
+  const user = db.users[userId];
+
+  if (!user) {
+    return res.json({ error: "Compte introuvable" });
+  }
+
+  if (user.password !== password) {
+    return res.json({ error: "Mot de passe incorrect" });
+  }
+
+  req.session.userId = userId;
+
+  res.json({
+    success: true,
+    userId,
+    pro: user.pro
+  });
+});
+
+// ME
+app.get("/me", (req, res) => {
+  if (!req.session.userId) {
+    return res.json({ logged: false });
+  }
+
+  const db = loadDB();
+  const user = db.users[req.session.userId];
+
+  res.json({
+    logged: true,
+    userId: req.session.userId,
+    pro: user?.pro || false
+  });
+});
+
+// DASHBOARD PROTECTION
+app.get("/dashboard", (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect("/login.html");
+  }
+
+  res.sendFile(__dirname + "/public/dashboard.html");
+});
+
+// UPGRADE PREMIUM
+app.post("/upgrade", (req, res) => {
+  const { userId } = req.body;
+
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    return res.json({ error: "Utilisateur introuvable" });
+  }
+
+  db.users[userId].pro = true;
+
+  saveDB(db);
+
+  res.json({ success: true, message: "Premium activé" });
+});
+
+// VIP CODE
+app.post("/vip", (req, res) => {
+  const { userId, code } = req.body;
+
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    return res.json({ error: "Utilisateur introuvable" });
+  }
+
+  if (code !== "VORAX-PRO-2026") {
+    return res.json({ error: "Code invalide" });
+  }
+
+  db.users[userId].pro = true;
+
+  saveDB(db);
+
+  res.json({ success: true, message: "VIP activé" });
+});
+
+// CHAT
+app.post("/chat", (req, res) => {
+  const { message, userId } = req.body;
+
+  if (!userId) {
+    return res.json({ reply: "❌ Connecte-toi d'abord" });
+  }
+
+  const db = loadDB();
+  const user = db.users[userId];
+
+  if (!user) {
+    return res.json({ reply: "❌ Utilisateur introuvable" });
+  }
+
+  if (user.pro) {
+    const ideas = [
+      "💡 Dropshipping",
+      "💡 Freelance IA",
+      "💡 Marketing digital",
+      "💡 Affiliation",
+      "💡 TikTok business"
+    ];
+
+    const idea = ideas[Math.floor(Math.random() * ideas.length)];
+
+    return res.json({
+      reply: "🔥 PREMIUM\n\n" + idea
+    });
+  }
+
+  user.count++;
+
+  let reply = "";
+
+  if (user.count === 1) {
+    reply = "💡 Business TikTok";
+  } else if (user.count === 2) {
+    reply = "💡 Dropshipping";
+  } else {
+    reply = "🚫 Passe PRO 💰";
+  }
+
+  saveDB(db);
+
+  res.json({ reply });
+});
+
+/* ======================
+   START SERVER
+====================== */
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("🚀 SERVEUR LANCÉ SUR PORT", PORT);
+});
