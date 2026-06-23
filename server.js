@@ -1,7 +1,11 @@
 const express = require("express");
 const fs = require("fs");
 const session = require("express-session");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");const axios = require("axios");
+
+const CINETPAY_API_KEY = "TON_API_KEY";
+const SITE_ID = "TON_SITE_ID";
+const SECRET_KEY = "TON_SECRET_KEY";
 
 const app = express();
 
