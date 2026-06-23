@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vorax SaaS</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0b1220;
+  color: white;
+}
+
+/* HEADER */
+.header {
+  padding: 20px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+/* CONTAINER */
+.container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  width: 300px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.free { background: #f59e0b; }
+.pro { background: #22c55e; }
+
+/* OUTPUT */
+.output {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #d1d5db;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🚀 VORAX SAAS - Business Ideas Generator</div>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div class="card">
+    <span class="badge free">FREE</span>
+    <h3>🔐 Connexion</h3>
+
+    <input id="userId" placeholder="User ID">
+    <input id="password" type="password" placeholder="Mot de passe">
+
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+
+    <div class="output" id="authMsg"></div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="card">
+    <h3>💡 Idées Business</h3>
+
+    <button onclick="getIdea()">Générer idée</button>
+
+    <div class="output" id="ideaBox"></div>
+  </div>
+
+</div>
+
+<script>
+let token = "";
+
+// 🔐 REGISTER
+async function register() {
+  const userId = document.getElementById("userId").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch("/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId, password })
+  });
+
+  const data = await res.json();
+  document.getElementById("authMsg").innerText = JSON.stringify(data);
+}
+
+// 🔑 LOGIN
+async function login() {
+  const userId = document.getElementById("userId").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId, password })
+  });
+
+  const data = await res.json();
+
+  if (data.token) {
+    token = data.token;
+  }
+
+  document.getElementById("authMsg").innerText =
+    data.pro ? "🔥 PRO ACTIF" : "🟢 FREE ACTIF";
+}
+
+// 💡 GET IDEA
+async function getIdea() {
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({ message: "idea" })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("ideaBox").innerText =
+    JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
