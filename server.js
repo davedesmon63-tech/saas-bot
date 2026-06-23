@@ -8,7 +8,7 @@ const app = express();
 const API_KEY = "TON_API_KEY";
 const SITE_ID = "TON_SITE_ID";
 
-const app = express();
+
 app.use(express.json());
 app.use(express.static("public"));
 
