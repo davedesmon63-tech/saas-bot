@@ -292,7 +292,7 @@ app.post("/chat", (req, res) => {
   "💡 Copywriting (vente avec texte)"
 ];
 
-    const idea = ideas[Math.floor(Math.random() * ideas.length)];
+    const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
 
     return res.json({
       reply: "🔥 PREMIUM\n\n" + idea
