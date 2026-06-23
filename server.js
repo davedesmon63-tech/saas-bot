@@ -27,47 +27,47 @@ app.post("/login", (req, res) => {
    PAYMENT ROUTES
 ====================== */
 
-// 💳 1. Lancer paiement
-app.post("/pay", async (req, res) => {
-  // ton code ici
-});
+// 💳 1. Lancer paiement app.post("/pay", async (req, res) => {
+  const { userId } = req.body;
 
+  const db = loadDB();
+  const user = db.users[userId];
 
-// 🔥 2. CONFIRMATION PAIEMENT (WEBHOOK)
-app.post("/notify", async (req, res) => {
-  const { transaction_id } = req.body;
+  if (!user) {
+    return res.json({ error: "Utilisateur introuvable" });
+  }
+
+  const transactionId = "VORAX_" + Date.now();
+
+  const data = {
+    apikey: CINETPAY_API_KEY,
+    site_id: SITE_ID,
+    transaction_id: transactionId,
+    amount: 5000,
+    currency: "XOF",
+    description: "Abonnement VORAX PRO",
+
+    notify_url: "https://saas-bot-n7qk.onrender.com/notify",
+    return_url: "https://saas-bot-n7qk.onrender.com/success",
+
+    customer_name: userId,
+    customer_email: userId
+  };
 
   try {
     const response = await axios.post(
-      "https://api-checkout.cinetpay.com/v2/payment/check",
-      {
-        apikey: CINETPAY_API_KEY,
-        site_id: SITE_ID,
-        transaction_id: transaction_id
-      }
+      "https://api-checkout.cinetpay.com/v2/payment",
+      data
     );
 
-    const payment = response.data.data;
-
-    if (payment.status === "ACCEPTED") {
-      const db = loadDB();
-
-      const userId = payment.customer_name;
-
-      .premium = true;
-      }
-
-      fs.writeFileSync("db.json", JSON.stringify(db, null, 2));
-
-      console.log("✅ Paiement validé pour", userId);
-    }
-
-    res.send("OK");
+    res.json({
+      payment_url: response.data.data.payment_url
+    });
 
   } catch (err) {
-    console.log("❌ erreur notify", err.message);
-    res.send("ERREUR");
+    res.json({ error: "Erreur paiement" });
   }
+
 });
 
 
@@ -103,7 +103,7 @@ app.post("/register", async (req, res) => {
 
   const db = loadDB();
 
-  if (db.users[userId]) {
+  
     return res.json({ error: "Utilisateur existe déjà" });
   }
 
