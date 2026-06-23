@@ -1,8 +1,47 @@
 const express = require("express");
 const fs = require("fs");
 const axios = require("axios");
+const session = require("express-session");
 
 const app = express();
+
+/* ======================
+   MIDDLEWARES
+====================== */
+app.use(express.json());
+app.use(express.static("public"));
+
+app.use(session({
+  secret: "vorax_secret_key",
+  resave: false,
+  saveUninitialized: false
+}));
+
+/* ======================
+   👤 USERS DATABASE (ICI)
+====================== */
+let users = [
+  {
+    id: 1,
+    email: "test@gmail.com",
+    password: "1234",
+    premium: false
+  }
+];
+
+/* ======================
+   ROUTES (ICI après users)
+====================== */
+// ex:
+// app.post("/login", ...)
+// app.get("/dashboard", ...)
+
+/* ======================
+   SERVER START (TOUT EN BAS)
+====================== */
+app.listen(3000, () => {
+  console.log("serveur lancé");
+});
 
 // 🔑 CinetPay (à remplir après inscription)
 const API_KEY = "TON_API_KEY";
