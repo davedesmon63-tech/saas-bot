@@ -25,7 +25,7 @@ app.use(session({
 const API_KEY = "TON_API_KEY";
 const SITE_ID = "TON_SITE_ID";
 
-// ⚠️ IMPORTANT : remplace par ton lien Render une fois déployé
+// 
 const BASE_URL = "https://TON-SITE.onrender.com";
 
 /* ======================
