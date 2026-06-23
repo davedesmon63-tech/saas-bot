@@ -73,7 +73,7 @@ app.post("/register", async (req, res) => {
 });
 
 // LOGIN
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { userId, password } = req.body;
 
   const db = loadDB();
@@ -83,7 +83,9 @@ app.post("/login", (req, res) => {
     return res.json({ error: "Compte introuvable" });
   }
 
-  if (user.password !== password) {
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
     return res.json({ error: "Mot de passe incorrect" });
   }
 
@@ -93,6 +95,7 @@ app.post("/login", (req, res) => {
     success: true,
     userId,
     pro: user.pro
+  
   });
 });
 
