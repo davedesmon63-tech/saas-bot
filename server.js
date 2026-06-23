@@ -1,16 +1,19 @@
 const express = require("express");
 const fs = require("fs");
-;
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 
 const app = express();
 
 /* ======================
-   MIDDLEWARES
+   🔐 MIDDLEWARE AUTH
 ====================== */
-app.use(express.json());
-app.use(express.static("public"));
+function isAuth(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Non autorisé" });
+  }
+  next();
+}
 
 app.use(session({
   secret: "vorax_secret_key_super_secure",
