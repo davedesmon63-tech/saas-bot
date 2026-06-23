@@ -37,10 +37,16 @@ app.use(session({
 ====================== */
 let users = [
   {
-    id: 1,
-    email: "test@gmail.com",
-    password: bcrypt.hashSync("1234", 10),,
-    premium: false
+    app.get("/me", (req, res) => {
+  if (!req.session.user) {
+    return res.json({ logged: false });
+  }
+
+  res.json({
+    logged: true,
+    user: req.session.user
+  });
+});
   }
 ];
 
