@@ -7,14 +7,16 @@ const app = express();
 
 /* ======================
    MIDDLEWARES
-====================== */
-app.use(express.json());
-app.use(express.static("public"));
-
 app.use(session({
-  secret: "vorax_secret_key",
+  secret: "vorax_secret_key_super_secure",
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 // 1 jour
+  }
+}));====================== */
+
 }));
 
 /* ======================
