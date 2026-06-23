@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vorax SaaS</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0b1220;
+  color: white;
+}
+
+/* HEADER */
+.header {
+  padding: 20px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+/* CONTAINER */
+.container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  width: 320px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.free { background: #f59e0b; }
+.pro { background: #22c55e; }
+
+/* OUTPUT */
+.output {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+/* CHAT */
+.chatBox {
+  height: 250px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.3);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.msg {
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 10px;
+  font-size: 14px;
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.user {
+  background: #22c55e;
+  color: black;
+  margin-left: auto;
+  text-align: right;
+}
+
+.bot {
+  background: #1f2937;
+  color: white;
+  margin-right: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🚀 VORAX SAAS - AI Business Ideas</div>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div class="card">
+    <span class="badge free">FREE</span>
+    <h3>🔐 Connexion</h3>
+
+    <input id="userId" placeholder="User ID">
+    <input id="password" type="password" placeholder="Mot de passe">
+
+    <button onclick="register()">Register</button>
+    <button onclick="login()">Login</button>
+
+    <div class="output" id="authMsg"></div>
+  </div>
+
+  <!-- IDEES BUSINESS -->
+  <div class="card">
+    <h3>💡 Idées Business</h3>
+
+    <button onclick="getIdea()">Générer idée</button>
+
+    <div class="output" id="ideaBox"></div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="card">
+    <span class="badge pro">AI CHAT</span>
+    <h3>💬 Chat Business AI</h3>
+
+    <div id="chatBox" class="chatBox"></div>
+
+    <input id="msg" placeholder="Pose ton idée business...">
+    <button onclick="sendMessage()">Envoyer</button>
+  </div>
+
+</div>
+
+<script>
+let token = "";
+
+/* REGISTER */
+async function register() {
+  const userId = document.getElementById("userId").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch("/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId, password })
+  });
+
+  const data = await res.json();
+  document.getElementById("authMsg").innerText = JSON.stringify(data);
+}
+
+/* LOGIN */
+async function login() {
+  const userId = document.getElementById("userId").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId, password })
+  });
+
+  const data = await res.json();
+
+  if (data.token) {
+    token = data.token;
+  }
+
+  document.getElementById("authMsg").innerText =
+    data.pro ? "🔥 PRO ACTIF" : "🟢 FREE ACTIF";
+}
+
+/* IDEE BUSINESS */
+async function getIdea() {
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({ message: "idea" })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("ideaBox").innerText =
+    data.reply || JSON.stringify(data);
+}
+
+/* CHAT */
+async function sendMessage() {
+  const msg = document.getElementById("msg").value;
+  if (!msg) return;
+
+  addMessage(msg, "user");
+
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({ message: msg })
+  });
+
+  const data = await res.json();
+
+  addMessage(data.reply || JSON.stringify(data), "bot");
+
+  document.getElementById("msg").value = "";
+}
+
+function addMessage(text, type) {
+  const box = document.getElementById("chatBox");
+
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = text;
+
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+</script>
+
+</body>
+</html>
