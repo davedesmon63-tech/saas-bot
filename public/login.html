@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - VORAX</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
+body {
+  background:#0a0a0a;
+  color:#fff;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.container {
+  background:#111;
+  padding:30px;
+  border-radius:15px;
+  border:2px solid #00ff88;
+  width:90%;
+  max-width:400px;
+}
+h1 {
+  text-align:center;
+  color:#00ff88;
+  margin-bottom:25px;
+}
+input {
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #333;
+  background:#0a0a0a;
+  color:#fff;
+  outline:none;
+}
+button {
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  background:#00ff88;
+  border:none;
+  color:#000;
+  font-weight:bold;
+  border-radius:8px;
+  cursor:pointer;
+}
+button:hover { opacity:0.9; }
+p {
+  text-align:center;
+  margin-top:15px;
+  font-size:14px;
+}
+a {
+  color:#00ff88;
+  text-decoration:none;
+}
+.error {
+  color:#ff4444;
+  font-size:13px;
+  text-align:center;
+  margin-top:10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🚀 VORAX Login</h1>
+  <input type="text" id="username" placeholder="Nom d'utilisateur">
+  <input type="password" id="password" placeholder="Mot de passe">
+  <button onclick="login()">Se connecter</button>
+  <div class="error" id="error"></div>
+  <p>Pas de compte? <a href="/register.html">S'inscrire</a></p>
+</div>
+
+<script>
+async function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const error = document.getElementById('error');
+  error.textContent = '';
+
+  if(!username ||!password) {
+    error.textContent = 'Remplis tous les champs';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username, password})
+    });
+
+    const data = await res.json();
+
+    if(res.ok) {
+      localStorage.setItem('token', data.token);
+      window.location.href = '/chat.html';
+    } else {
+      error.textContent = data.error || 'Erreur de connexion';
+    }
+  } catch(e) {
+    error.textContent = 'Erreur serveur';
+  }
+}
+</script>
+</body>
+</html>
