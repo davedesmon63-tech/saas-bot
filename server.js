@@ -32,9 +32,29 @@ let users = [
 /* ======================
    ROUTES (ICI après users)
 ====================== */
-// ex:
-// app.post("/login", ...)
-// app.get("/dashboard", ...)
+//app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = users.find(u => u.email === email);
+
+  if (!user) {
+    return res.json({ success: false, message: "Utilisateur introuvable" });
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (!passwordMatch) {
+    return res.json({ success: false, message: "Mot de passe incorrect" });
+  }
+
+  req.session.user = {
+    id: user.id,
+    email: user.email,
+    premium: user.premium
+  };
+
+  res.json({ success: true, user: req.session.user });
+});
 
 /* ======================
    SERVER START (TOUT EN BAS)
