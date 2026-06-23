@@ -140,7 +140,10 @@ app.post("/login", async (req, res) => {
 app.get("/me", (req, res) => {
   if (!req.session.userId) {
     return res.json({ logged: false });
-  }
+  } 
+} if (!userId || !db.users[userId]) {
+  return res.json({ reply: "❌ Connecte-toi d'abord" });
+}
 
   const db = loadDB();
   const user = db.users[req.session.userId];
