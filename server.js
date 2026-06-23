@@ -272,12 +272,25 @@ app.post("/chat", (req, res) => {
   // 👑 PREMIUM
   if (user.pro) {
     const ideas = [
-      "💡 Dropshipping",
-      "💡 Freelance IA",
-      "💡 Marketing digital",
-      "💡 Affiliation",
-      "💡 TikTok business"
-    ];
+      const ideas = [
+  const ideas = [
+  "💡 Dropshipping",
+  "💡 Freelance IA",
+  "💡 Marketing digital",
+  "💡 Affiliation",
+  "💡 TikTok business",
+
+  // 🔥 NOUVELLES IDÉES
+  "💡 Création d'agence SMMA",
+  "💡 Vente de formations en ligne",
+  "💡 Création d'applications SaaS",
+  "💡 Print on demand (T-shirts personnalisés)",
+  "💡 Crypto & trading (bases)",
+  "💡 Montage vidéo freelance",
+  "💡 Automatisation avec bots",
+  "💡 Création de contenu YouTube",
+  "💡 Copywriting (vente avec texte)"
+];
 
     const idea = ideas[Math.floor(Math.random() * ideas.length)];
 
