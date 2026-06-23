@@ -156,7 +156,9 @@ app.post("/pay", async (req, res) => {
 ====================== */
 
 app.post("/notify", async (req, res) => {
-  console.log("IPN RECEIVED:", req.body);
+app.get("/success", (req, res) => {
+  res.send("💎 Paiement réussi - PRO activé si validé");
+});  console.log("IPN RECEIVED:", req.body);
 
   const transaction_id = req.body.transaction_id;
 
