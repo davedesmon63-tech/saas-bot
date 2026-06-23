@@ -1,59 +1,44 @@
+// 🔹 IMPORTS
 const express = require("express");
 const fs = require("fs");
 const session = require("express-session");
-const bcrypt = require("bcrypt");const axios = require("axios");
-
-const CINETPAY_API_KEY = "TON_API_KEY";
-const SITE_ID = "TON_SITE_ID";
-const SECRET_KEY = "TON_SECRET_KEY";
+const bcrypt = require("bcrypt");
+const axios = require("axios");
 
 const app = express();
 
-/* ======================
-   🔐 MIDDLEWARE AUTH
-====================== */
-function isAuth(req, res, next) {
-  if (!req.session.userId) {
-    return res.status(401).json({ error: "Non autorisé" });
-  }
-  next();
-}
-
-app.use(session({
-  secret: "vorax_secret_key_super_secure",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24
-  }
-}));
+app.use(express.json());
+app.use(express.static("public"));
 
 /* ======================
-   DATABASE FILE
+   DATABASE FUNCTIONS
 ====================== */
-const DB_FILE = "./db.json";
-
 function loadDB() {
-  if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify({ users: {} }, null, 2));
-  }
-  return JSON.parse(fs.readFileSync(DB_FILE));
-}
-
-function saveDB(db) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  return JSON.parse(fs.readFileSync("db.json"));
 }
 
 /* ======================
-   ROUTES
-====================== */app.get("/admin/stats", (req, res) => {
-const db = loadDB();
+   AUTH ROUTES
+====================== */
+app.post("/login", (req, res) => {
+  // login code
+});
 
-const users = Object.values(db.users);
+/* ======================
+   PAYMENT ROUTES  
+====================== */
+app.post("/pay", async (req, res) => {
+  const { userId } = req.body;
 
-const total = users.length;
-const premium = users.filter(u => u.pro).length;
+  const db = loadDB(); // ✅ ici c’est BON
+  const user = db.users[userId];
+
+  if (!user) {
+    return res.json({ error: "Utilisateur introuvable" });
+  }
+
+  // suite...
+});
 
 res.json({
 totalUsers: total,
