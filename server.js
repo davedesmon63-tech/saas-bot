@@ -64,7 +64,21 @@ app.get("/admin/users", (req, res) => {
 
   res.json(users);
 });
+app.post("/upgrade", (req, res) => {
+  const { userId } = req.body;
 
+  const db = loadDB();
+
+  if (!db.users[userId]) {
+    return res.json({ error: "Utilisateur introuvable" });
+  }
+
+  db.users[userId].pro = true;
+
+  saveDB(db);
+
+  res.json({ success: true, message: "Premium activé 👑" });
+});
 // REGISTER
 app.post("/register", async (req, res) => {
   const { userId, password } = req.body;
