@@ -1,0 +1,19 @@
+{
+  "name": "vorax-ai-saas",
+  "version": "1.0.0",
+  "description": "VORAX AI - SaaS ChatGPT style business generator",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "bcrypt": "^5.1.0",
+    "axios": "^1.6.0",
+    "express-rate-limit": "^7.0.0"
+  }
+}
