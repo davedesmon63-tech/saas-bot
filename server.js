@@ -1,5 +1,9 @@
 const express = require("express");
-const fs = require("fs");
+const fs = require("fs");const axios = require("axios");
+
+// 🔑 CinetPay (à remplir après inscription)
+const API_KEY = "TON_API_KEY";
+const SITE_ID = "TON_SITE_ID";
 
 const app = express();
 app.use(express.json());
