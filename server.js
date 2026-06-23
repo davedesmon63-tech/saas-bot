@@ -10,7 +10,14 @@ const SITE_ID = "TON_SITE_ID";
 
 
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static("public"))const     session = require("express-session");
+
+app.use(session({
+  secret: "vorax_secret_key",
+  resave: false,
+  saveUninitialized: false
+}));
+  
 
 const DB_FILE = "./db.json";
 
