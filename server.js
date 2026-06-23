@@ -6,7 +6,19 @@ const session = require("express-session")//;const bcrypt = require("bcrypt");
 const app = express();
 
 /* ======================
+   const express = require("express");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
+
+const app = express();
+
+/* ======================
    MIDDLEWARES
+====================== */
+
+app.use(express.json());
+app.use(express.static("public"));
+
 app.use(session({
   secret: "vorax_secret_key_super_secure",
   resave: false,
@@ -15,7 +27,8 @@ app.use(session({
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 // 1 jour
   }
-}));====================== */
+}));
+====================== */
 
 }));
 
