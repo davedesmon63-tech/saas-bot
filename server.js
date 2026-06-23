@@ -43,7 +43,7 @@ function saveDB(db) {
 ====================== */
 
 // REGISTER
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   const { userId, password } = req.body;
 
   const db = loadDB();
@@ -52,13 +52,22 @@ app.post("/register", (req, res) => {
     return res.json({ error: "Utilisateur existe déjà" });
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   db.users[userId] = {
-    password,
+    password: hashedPassword,
     pro: false,
-    count: 0
+    count: 0,
+    createdAt: new Date()
   };
 
   saveDB(db);
+
+  res.json({ success: true });
+});;
+  }
+
+  ;
 
   res.json({ success: true });
 });
