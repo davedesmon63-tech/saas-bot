@@ -26,7 +26,53 @@ app.post("/login", (req, res) => {
 
 /* ======================
    PAYMENT ROUTES  
+====================== *//* ======================
+   PAYMENT ROUTES
 ====================== */
+
+// 💳 1. Lancer paiement
+app.post("/pay", async (req, res) => {
+  // ton code ici
+});
+
+
+// 🔥 2. CONFIRMATION PAIEMENT (WEBHOOK)
+app.post("/notify", async (req, res) => {
+  const { transaction_id } = req.body;
+
+  try {
+    const response = await axios.post(
+      "https://api-checkout.cinetpay.com/v2/payment/check",
+      {
+        apikey: CINETPAY_API_KEY,
+        site_id: SITE_ID,
+        transaction_id: transaction_id
+      }
+    );
+
+    const payment = response.data.data;
+
+    if (payment.status === "ACCEPTED") {
+      const db = loadDB();
+
+      const userId = payment.customer_name;
+
+      if (db.users[userId]) {
+        db.users[userId].premium = true;
+      }
+
+      fs.writeFileSync("db.json", JSON.stringify(db, null, 2));
+
+      console.log("✅ Paiement validé pour", userId);
+    }
+
+    res.send("OK");
+
+  } catch (err) {
+    console.log("❌ erreur notify", err.message);
+    res.send("ERREUR");
+  }
+});
 app.post("/pay", async (req, res) => {
   const { userId } = req.body;
 
