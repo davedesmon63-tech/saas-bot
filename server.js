@@ -12,10 +12,10 @@ const session = require("express-session");
 
 const app = express();
 
-/* ======================
+/* ====================== */
    MIDDLEWARES
-====================== */
 
+/* ====================== */
 app.use(express.json());
 app.use(express.static("public"));
 
