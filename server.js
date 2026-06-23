@@ -40,7 +40,21 @@ function saveDB(db) {
 
 /* ======================
    ROUTES
-====================== */
+====================== */app.get("/admin/stats", (req, res) => {
+const db = loadDB();
+
+const users = Object.values(db.users);
+
+const total = users.length;
+const premium = users.filter(u => u.pro).length;
+
+res.json({
+totalUsers: total,
+premiumUsers: premium,
+freeUsers: total - premium
+});
+});  
+
 
 // REGISTER
 app.post("/register", async (req, res) => {
