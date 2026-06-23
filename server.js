@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const axios = require("axios");
-const session = require("express-session");
+const session = require("express-session")//;const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -24,7 +24,7 @@ let users = [
   {
     id: 1,
     email: "test@gmail.com",
-    password: "1234",
+    password: bcrypt.hashSync("1234", 10),,
     premium: false
   }
 ];
