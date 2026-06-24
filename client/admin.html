@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Admin Vorax</title>
+<style>body{background:#0a0a0a;color:#fff;padding:20px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #333;padding:10px;text-align:left}th{background:#1a1a1a}.btn{background:red;color:#fff;padding:5px 10px;border:none;border-radius:3px;cursor:pointer}</style>
+</head><body>
+<h2>🔐 Panel Admin Vorax</h2>
+<table id="usersTable"><tr><th>User ID</th><th>Plan</th><th>Expire</th><th>Créé le</th><th>Action</th></tr></table>
+<script>
+const adminId = localStorage.getItem('userId');
+fetch('/api/admin/users',{headers:{'x-userid':adminId}})
+.then(r=>r.json()).then(users=>{
+users.forEach(u=>{
+const date = new Date(u.createdAt).toLocaleDateString();
+const exp = u.premiumExpires?new Date(u.premiumExpires).toLocaleDateString():'N/A';
+usersTable.innerHTML+=`<tr><td>${u.userId}</td><td>${u.plan}</td><td>${exp}</td><td>${date}</td><td><button class="btn" onclick="cancel('${u.userId}')">Annuler abo</button></td></tr>`
+})});
+
+async function cancel(userId){
+if(confirm('Annuler abo de '+userId+' ?')){
+await fetch('/api/admin/cancel/'+userId,{method:'POST',headers:{'x-userid':adminId}});
+location.reload();
+}}
+</script></body></html>
