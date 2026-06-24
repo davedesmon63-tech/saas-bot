@@ -1,6 +1,0 @@
-services:
-    - type: web
-    name: vorax
-    env: node
-    buildCommand: npm install
-    startCommand: node server.js
