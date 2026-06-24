@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Register Vorax</title>
+<style>body{background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh}form{background:#1a1a1a;padding:30px;border-radius:10px;width:300px}input{width:100%;padding:10px;margin:10px 0;background:#2a2a2a;border:1px solid #333;color:#fff;border-radius:5px}button{background:#00ff88;color:#000;padding:12px;width:100%;border:none;border-radius:5px;font-weight:bold;cursor:pointer}a{color:#00ff88}</style>
+</head><body><form onsubmit="register(event)">
+<h2>Créer compte Vorax</h2>
+<input id="userId" placeholder="User ID" required>
+<input id="password" type="password" placeholder="Mot de passe" required>
+<button type="submit">S'inscrire</button>
+<p>Déjà un compte? <a href="/login">Login</a></p>
+</form><script>
+async function register(e){e.preventDefault();
+const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:userId.value,password:password.value})});
+const data=await res.json();
+if(res.ok){alert('Compte créé!');location.href='/login'}else alert(data.error)}
+</script></body></html>
