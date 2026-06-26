@@ -1,0 +1,24 @@
+{
+  "name": "voraxdb-bot",
+  "version": "1.0.0",
+  "description": "Bot WhatsApp avec MongoDB + Paydunya",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.2.0",
+    "paydunya-nodejs": "^1.0.0",
+    "@whiskeysockets/baileys": "^6.7.5",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
