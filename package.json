@@ -1,0 +1,16 @@
+{
+  "name": "vorax-saas",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "npx puppeteer install chrome"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "qrcode": "^1.5.3",
+    "whatsapp-web.js": "^1.25.0",
+    "puppeteer": "^22.0.0"
+  }
+}
