@@ -33,7 +33,10 @@ const paydunyaSetup = {
     } else {
       res.status(500).json({ success: false, error: response.response_text });
     }
-  } catch (err) {
+  } catch (err) {   } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}); // <- cette parenthèse + point-virgule ferme app.post
     res.status(500).json({ success: false, error: err.message });
   }
 });
