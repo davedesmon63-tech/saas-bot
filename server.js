@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import pkg from '@whiskeysockets/baileys';
-import Paydunya from 'paydunya-nodejs';
+;
 
 dotenv.config();
 const { default: makeWASocket, useMultiFileAuthState } = pkg;
