@@ -10,7 +10,14 @@ const PAYDUNYA_MASTER_KEY = process.env.PAYDUNYA_MASTER_KEY;
 const PAYDUNYA_PRIVATE_KEY = process.env.PAYDUNYA_PRIVATE_KEY;
 const PAYDUNYA_TOKEN = process.env.PAYDUNYA_TOKEN;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-const PRICE = 2500; // Prix abonnement VORAX;
+const PRICE = 2500;const { CheckoutStore } = require('paydunya-nodejs-sdk');
+
+const paydunyaSetup = {
+  masterKey: PAYDUNYA_MASTER_KEY,
+  privateKey: PAYDUNYA_PRIVATE_KEY,
+  token: PAYDUNYA_TOKEN,
+  mode: 'test' // Passe 'live' quand tu veux encaisser pour de vrai
+}; // Prix abonnement VORAX;
 
 /* ======================
    IDEES BUSINESS
