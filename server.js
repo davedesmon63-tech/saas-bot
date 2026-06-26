@@ -17,7 +17,26 @@ const paydunyaSetup = {
   privateKey: PAYDUNYA_PRIVATE_KEY,
   token: PAYDUNYA_TOKEN,
   mode: 'test' // Passe 'live' quand tu veux encaisser pour de vrai
-}; // Prix abonnement VORAX;
+}; // Prix abonnement VORAX;app.post('/api/pay/create', async (req, res) => {
+  try {
+    const checkout = new CheckoutStore(paydunyaSetup);
+    checkout.addItem('Abonnement VORAX 30 jours', 1, PRICE, PRICE);
+    checkout.setTotalAmount(PRICE);
+    checkout.setDescription('Accès complet VORAX SaaS - Idées business IA');
+    checkout.setCallbackUrl(BASE_URL + '/api/pay/notify'); // PayDunya appelle ici après paiement
+    checkout.setReturnUrl(BASE_URL + '/?success=true'); // Client revient ici
+
+    const response = await checkout.create();
+    
+    if(response.success) {
+      res.json({ success: true, url: response.response_text });
+    } else {
+      res.status(500).json({ success: false, error: response.response_text });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 /* ======================
    IDEES BUSINESS
