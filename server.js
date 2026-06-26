@@ -6,11 +6,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 3000;
-const CINETPAY_KEY = process.env.CINETPAY_API_KEY;
-const CINETPAY_SITE = process.env.CINETPAY_SITE_ID;
+const PAYDUNYA_MASTER_KEY = process.env.PAYDUNYA_MASTER_KEY;
+const PAYDUNYA_PRIVATE_KEY = process.env.PAYDUNYA_PRIVATE_KEY;
+const PAYDUNYA_TOKEN = process.env.PAYDUNYA_TOKEN;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-const PRICE = 5000;
+const PRICE = 2500; // Prix abonnement VORAX;
 
 /* ======================
    IDEES BUSINESS
